@@ -28,6 +28,7 @@ jobs:
       id: build-and-push-admin
       with:
         repo: ${{ env.REPO_NAME }}
+        registry: testpallavi
         dockerfile: Dockerfile
         platforms: linux/amd64
 
