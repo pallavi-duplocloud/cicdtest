@@ -1,0 +1,52 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+env:
+  DUPLO_HOST: https://qa-aws.duplocloud.net/
+  DUPLO_TOKEN: AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAA3aIefqJ-60qMDW-NZMQ9LQAAAAACAAAAAAAQZgAAAAEAACAAAAC3GAsPIBUfLBhmDzT-36gMb8l_5CoEv21_tfC2sEimWwAAAAAOgAAAAAIAACAAAABwxVWImzLA0U1569q_4Eb5X8H8EuV3VkMrSiqO3NaEyJAAAACTMneP8JnKh9xlwx53J7aqN7Ict7RdASXqQyAouW_sp9VyoGrPBG0T2laRVc-jqtxGhw6XyTbaP_5Bn8uAZB-JpQBb4GJxblS-ghi99qtQETxb-97P_F9LQvbTXYFXjuwZpiWYtRPl8VACHB9BSUo1PxveMKozObPB3ptxwZwJTaMgsQzXus7malpNC8Kh4bhAAAAA302ZL1UOaBI_SFLrRA5X3lzUyQ5AdeJz9bzMKTW_JsXe479fRRsiACdxnDIDwCO36RBovLULT85sWrjXFLAkvg
+  DUPLO_TENANT: palltenant
+  REPO_NAME: testpallavi
+  SERVICE_NAME: nginx
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Duplo Setup
+      uses: duplocloud/actions/setup@main
+
+    - name: Build and Push Admin Docker Image
+      uses: duplocloud/actions/build-image@main
+      id: build-and-push-admin
+      with:
+        repo: ${{ env.REPO_NAME }}
+        dockerfile: Dockerfile
+        platforms: linux/amd64
+        extra-tags:  ${{ github.sha }}
+
+  outputs:
+      admin_image: "${{ steps.build-and-push-admin.outputs.image }}:${{ github.sha }}"
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+    - build
+    environment: development
+    steps:
+    - name: Duplo Setup
+      uses: duplocloud/actions/setup@main
+
+    - name: Update Admin Service
+      uses: duplocloud/actions/update-image@main
+      with:
+        name: ${{ env.SERVICE_NAME }}
+        image: ${{ needs.build.outputs.admin_image }}
+        type: service
