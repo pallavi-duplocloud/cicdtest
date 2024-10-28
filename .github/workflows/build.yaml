@@ -30,7 +30,6 @@ jobs:
         repo: ${{ env.REPO_NAME }}
         dockerfile: Dockerfile
         platforms: linux/amd64
-        build-args: ${{ github.sha }}
 
     outputs:
       admin_image: "${{ steps.build-and-push-admin.outputs.image }}:${{ github.sha }}"
