@@ -1,17 +1,14 @@
-FROM ubuntu:18.04
+# Pull the minimal Ubuntu image
+FROM ubuntu
 
-LABEL maintainer="m24te28"
+# Install Nginx
+RUN apt-get -y update && apt-get -y install nginx
 
-RUN apt-get update && \
-    apt-get install -y -q curl gnupg2
-RUN curl http://nginx.org/keys/nginx_signing.key | apt-key add -
+# Copy the Nginx config
+COPY default /etc/nginx/sites-available/default
 
-RUN apt-get update && \
-    apt-get install -y -q nginx
+# Expose the port for access
+EXPOSE 80/tcp
 
-ADD nginx.conf /etc/nginx/
-ADD server.conf /etc/nginx/conf.d
-
-EXPOSE 443 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# Run the Nginx server
+CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
