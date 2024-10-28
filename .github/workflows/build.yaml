@@ -3,8 +3,6 @@ name: Docker Image CI
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch:
-  
 env:
   DUPLO_HOST: https://qa-aws.duplocloud.net/
   DUPLO_TOKEN: AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAA3aIefqJ-60qMDW-NZMQ9LQAAAAACAAAAAAAQZgAAAAEAACAAAAC3GAsPIBUfLBhmDzT-36gMb8l_5CoEv21_tfC2sEimWwAAAAAOgAAAAAIAACAAAABwxVWImzLA0U1569q_4Eb5X8H8EuV3VkMrSiqO3NaEyJAAAACTMneP8JnKh9xlwx53J7aqN7Ict7RdASXqQyAouW_sp9VyoGrPBG0T2laRVc-jqtxGhw6XyTbaP_5Bn8uAZB-JpQBb4GJxblS-ghi99qtQETxb-97P_F9LQvbTXYFXjuwZpiWYtRPl8VACHB9BSUo1PxveMKozObPB3ptxwZwJTaMgsQzXus7malpNC8Kh4bhAAAAA302ZL1UOaBI_SFLrRA5X3lzUyQ5AdeJz9bzMKTW_JsXe479fRRsiACdxnDIDwCO36RBovLULT85sWrjXFLAkvg
@@ -34,7 +32,7 @@ jobs:
         platforms: linux/amd64
         extra-tags:  ${{ github.sha }}
 
-  outputs:
+    outputs:
       admin_image: "${{ steps.build-and-push-admin.outputs.image }}:${{ github.sha }}"
 
   deploy:
